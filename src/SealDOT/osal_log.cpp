@@ -15,35 +15,34 @@
 
 #include "osal_log.h"
 
-#include <stdarg.h>
-#include <stdio.h>
+#include <cstdarg>
+#include <cstdio>
+
+#include "logger.hpp"
+#include "string_format.hpp"
 
 void os_log (uint8_t type, const char * fmt, ...)
 {
+   using bestsens::Logger;
    va_list list;
+
+   va_start (list, fmt);
+   const auto finished_msg = stringFormat (std::string_view{fmt}, list);
+   va_end (list);
 
    switch (LOG_LEVEL_GET (type))
    {
    case LOG_LEVEL_DEBUG:
-      printf ("%10lld [DEBUG] ", xTaskGetTickCount());
-      break;
+      return Logger::log_detail<Logger::level::debug> (finished_msg);
    case LOG_LEVEL_INFO:
-      printf ("%10lld [INFO ] ", xTaskGetTickCount());
-      break;
+      return Logger::log_detail<Logger::level::info> (finished_msg);
    case LOG_LEVEL_WARNING:
-      printf ("%10lld [WARN ] ", xTaskGetTickCount());
-      break;
+      return Logger::log_detail<Logger::level::warn> (finished_msg);
    case LOG_LEVEL_ERROR:
-      printf ("%10lld [ERROR] ", xTaskGetTickCount());
-      break;
+      return Logger::log_detail<Logger::level::err> (finished_msg);
    case LOG_LEVEL_FATAL:
-      printf ("%10lld [FATAL] ", xTaskGetTickCount());
-      break;
+      return Logger::log_detail<Logger::level::critical> (finished_msg);
    default:
-      break;
+      return Logger::log_detail<Logger::level::info> (finished_msg);
    }
-
-   va_start (list, fmt);
-   vprintf (fmt, list);
-   va_end (list);
 }

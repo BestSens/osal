@@ -30,4 +30,4 @@ target_include_directories(osal PUBLIC
   $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/src/SealDOT>
   )
 
-target_link_libraries(osal FreeRTOS)
+target_link_libraries(osal FreeRTOS logger)
