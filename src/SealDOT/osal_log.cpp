@@ -27,8 +27,13 @@ void os_log (uint8_t type, const char * fmt, ...)
    va_list list;
 
    va_start (list, fmt);
-   const auto finished_msg = stringFormat (std::string_view{fmt}, list);
+   auto finished_msg = stringFormat (std::string_view{fmt}, list);
    va_end (list);
+
+   if (finished_msg.substr (finished_msg.size() - 1) == "\n")
+   {
+      finished_msg = finished_msg.substr (0, finished_msg.size() - 1);
+   }
 
    switch (LOG_LEVEL_GET (type))
    {
