@@ -17,17 +17,20 @@
 
 #include <stdlib.h>
 
+void* pvPortCalloc(size_t count, size_t size);
+void vPortFree(void*);
+
 #define TMO_TO_TICKS(ms) \
    ((ms == OS_WAIT_FOREVER) ? portMAX_DELAY : (ms) / portTICK_PERIOD_MS)
 
 void * os_malloc (size_t size)
 {
-   return malloc (size);
+   return pvPortMalloc (size);
 }
 
 void os_free (void * ptr)
 {
-   free (ptr);
+   vPortFree (ptr);
 }
 
 os_thread_t * os_thread_create (
@@ -209,7 +212,7 @@ os_timer_t * os_timer_create (
 {
    os_timer_t * timer;
 
-   timer = malloc (sizeof (*timer));
+   timer = pvPortMalloc (sizeof (*timer));
    CC_ASSERT (timer != NULL);
 
    timer->fn  = fn;
@@ -255,5 +258,5 @@ void os_timer_destroy (os_timer_t * timer)
    BaseType_t status = xTimerDelete (timer->handle, portMAX_DELAY);
    CC_UNUSED (status);
    CC_ASSERT (status == pdPASS);
-   free (timer);
+   vPortFree (timer);
 }
